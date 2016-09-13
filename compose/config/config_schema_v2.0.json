@@ -219,8 +219,7 @@
             "format": "overwrites"
           },
           "uniqueItems": true
-        },
-        "override_strategy": {"type": "string"}
+        }
       },
 
       "dependencies": {

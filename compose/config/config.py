@@ -97,7 +97,7 @@ ALLOWED_KEYS = DOCKER_CONFIG_KEYS + [
     'log_opt',
     'logging',
     'network_mode',
-    'override_strategy'
+    'overwrite',
 ]
 
 DOCKER_VALID_URL_PREFIXES = (
@@ -324,6 +324,7 @@ def load(config_details):
     if main_file.version != V1:
         for service_dict in service_dicts:
             match_named_volumes(service_dict, volumes)
+
     return Config(main_file.version, service_dicts, volumes, networks)
 
 
@@ -750,10 +751,7 @@ def merge_service_dicts(base, override, version):
         md.merge_field(field, merge_path_mappings)
 
     for field in ['ports']:
-        if ('override_strategy' in base and
-                base['override_strategy'] == 'overwrite'):
-            md.merge_field(field, merge_overwrite_items_lists, default=[])
-        elif ('overwrite' in base and field in base['overwrite']):
+        if ('overwrite' in base and field in base['overwrite']):
             md.merge_field(field, merge_overwrite_items_lists, default=[])
         else:
             md.merge_field(field, merge_unique_items_lists, default=[])

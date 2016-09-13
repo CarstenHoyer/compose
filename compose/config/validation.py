@@ -43,7 +43,6 @@ DOCKER_CONFIG_HINTS = {
 VALID_NAME_CHARS = '[a-zA-Z0-9\._\-]'
 VALID_EXPOSE_FORMAT = r'^\d+(\-\d+)?(\/[a-zA-Z]+)?$'
 VALID_OVERWRITE_FORMAT = r'^(ports)$'
-VALID_OVERRIDE_STRATEGY_FORMAT = r'^(default|overwrite)$'
 
 
 @FormatChecker.cls_checks(format="ports", raises=ValidationError)
@@ -71,16 +70,6 @@ def format_overwrite(instance):
             if not re.match(VALID_OVERWRITE_FORMAT, instance):
                 raise ValidationError(
                     "should be of the format 'ports'")
-
-    return True
-
-
-@FormatChecker.cls_checks(format="override_strategy", raises=ValidationError)
-def format_override_strategy(instance):
-    if isinstance(instance, six.string_types):
-        if not re.match(VALID_OVERRIDE_STRATEGY_FORMAT, instance):
-            raise ValidationError(
-                "should be either 'default' or 'overwrite'")
 
     return True
 
@@ -383,7 +372,7 @@ def process_config_schema_errors(error):
 
 def validate_against_config_schema(config_file):
     schema = load_jsonschema(config_file.version)
-    format_checker = FormatChecker(["overwrite", "override_strategy", "ports", "expose"])
+    format_checker = FormatChecker(["overwrite", "ports", "expose"])
     validator = Draft4Validator(
         schema,
         resolver=RefResolver(get_resolver_path(), schema),
